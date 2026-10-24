@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>天才程序员</title>
+<link rel="icon" href="https://pic0.dehua.cloud94.cn/2025/08/631cfee3-61c1-4b91-9261-2d0f142d717b.png">
+<link rel="preconnect" href="https://hk.example.com" crossorigin>
+<link rel="preconnect" href="https://sg.example.com" crossorigin>
+<link rel="preconnect" href="https://us-west.example.com" crossorigin>
+<noscript><meta http-equiv="refresh" content="0;url=https://hk.example.com"></noscript>
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#1a1a1a;
+  --muted:#6b7280;
+  --track:#e9ecf2;
+  --line:#eef1f6;
+  --accent:#2563eb;
+  --ok:#16a34a;
+  --ok-shadow:rgba(22,163,74,.45);
+  --glow:rgba(37,99,235,.10);
+  --grid:.55;
+  --logo-plate:0;
+  --shadow-logo:rgba(15,23,42,.16);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0a0d14;
+    --text:#eef2f9;
+    --muted:#8b98ad;
+    --track:#1e2637;
+    --line:#141b29;
+    --ok:#34d399;
+    --ok-shadow:rgba(52,211,153,.4);
+    --glow:rgba(59,130,246,.16);
+    --grid:.5;
+    --logo-plate:1;
+    --shadow-logo:rgba(0,0,0,.14);
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;min-height:100vh;min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+/* 顶部柔光，让纯白背景不那么死板 */
+body::before{
+  content:"";position:fixed;left:50%;top:-42vmax;width:100vmax;height:100vmax;
+  transform:translateX(-50%);
+  background:radial-gradient(circle,var(--glow) 0%,transparent 62%);
+  pointer-events:none;
+}
+/* 极淡的网格纹理，居中渐隐 */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:var(--grid);
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(circle at 50% 42%,#000 0%,transparent 70%);
+  mask-image:radial-gradient(circle at 50% 42%,#000 0%,transparent 70%);
+}
+
+.stage{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  animation:rise .7s cubic-bezier(.2,.8,.3,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- 加载环 + Logo ---------- */
+.logo-wrap{position:relative;width:200px;height:200px;display:grid;place-items:center;margin-bottom:38px}
+/* 暗色模式下 logo 的深色部分会糊进背景，垫一层白色底板提升对比 */
+.logo-wrap::before{
+  content:"";position:absolute;width:198px;height:198px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 72px 14px rgba(255,255,255,.15);
+  opacity:var(--logo-plate);pointer-events:none;transition:opacity .3s ease;
+}
+.ring-box{position:absolute;inset:-22px;border-radius:50%}
+.track{position:absolute;inset:0;border-radius:50%;border:3px solid var(--track);transition:border-color .45s ease}
+.ring{
+  position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0deg,transparent 282deg,var(--accent) 348deg,#8b5cf6 360deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 4px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 4px));
+  animation:spin 1.15s linear infinite;
+  transition:opacity .35s ease;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{position:absolute;inset:0;border-radius:50%;border:2px solid var(--ok);opacity:0}
+/* 成功勾：做成右下角小徽标，避免被 logo 盖住 */
+.check{
+  position:absolute;right:2px;bottom:2px;width:40px;height:40px;border-radius:50%;
+  background:var(--ok);display:grid;place-items:center;z-index:3;
+  opacity:0;transform:scale(.4);
+  box-shadow:0 8px 20px -6px var(--ok-shadow);
+  transition:opacity .28s ease,transform .5s cubic-bezier(.2,.9,.3,1);
+}
+.check svg{
+  width:21px;height:21px;fill:none;stroke:#fff;stroke-width:3;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:26;stroke-dashoffset:26;
+  transition:stroke-dashoffset .4s .18s ease;
+}
+.logo{
+  position:relative;z-index:2;width:168px;height:168px;
+  object-fit:contain;border-radius:30px;
+  filter:drop-shadow(0 14px 30px var(--shadow-logo));
+  animation:float 4s ease-in-out infinite;
+  transition:transform .5s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* 成功态 */
+body.done .ring{opacity:0}
+body.done .track{border-color:var(--ok)}
+body.done .check{opacity:1;transform:scale(1)}
+body.done .check svg{stroke-dashoffset:0}
+body.done .pulse{animation:burst .95s ease-out}
+body.done .logo{animation:none;transform:scale(1.04)}
+@keyframes burst{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.3);opacity:0}}
+
+/* ---------- 文案 ---------- */
+.title{
+  margin:0;font-size:23px;font-weight:650;letter-spacing:.6px;
+  color:var(--text);line-height:1.35;
+}
+.tip{
+  margin:11px 0 0;font-size:13.5px;line-height:1.6;color:var(--muted);
+  min-height:22px;letter-spacing:.2px;
+  transition:color .3s ease;
+}
+.tip.ok{color:var(--ok)}
+
+/* ---------- 进度条 ---------- */
+.progress{
+  position:relative;width:196px;height:4px;border-radius:99px;
+  background:var(--track);overflow:hidden;margin-top:28px;
+}
+.progress i{
+  display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),#8b5cf6);
+  transition:width .45s cubic-bezier(.4,0,.2,1),background .4s ease;
+}
+/* 首帧尚未有数据时的往复动画 */
+.progress.indet i{width:38%;animation:sweep 1.25s ease-in-out infinite}
+@keyframes sweep{0%{margin-left:-38%}100%{margin-left:100%}}
+body.done .progress i{background:linear-gradient(90deg,var(--ok),#34d399)}
+
+/* ---------- 手动按钮（仅在关闭自动跳转时出现，未显示时不占位） ---------- */
+.go{
+  appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  margin:0;height:0;padding:0 22px;overflow:hidden;
+  border:1px solid transparent;border-radius:99px;background:transparent;color:var(--muted);
+  font-family:inherit;font-size:13px;font-weight:550;letter-spacing:.3px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease,height .3s ease,margin .3s ease,border-color .2s,color .2s;
+}
+.go.show{height:38px;margin-top:24px;border-color:var(--track);opacity:1;pointer-events:auto}
+.go:hover{border-color:var(--accent);color:var(--accent)}
+
+.foot{
+  margin:22px 0 0;font-size:11.5px;line-height:1.7;color:var(--muted);
+  opacity:.75;letter-spacing:.2px;
+}
+.foot:empty{display:none}
+
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,14px);
+  background:#111827;color:#fff;font-size:12.5px;padding:9px 16px;border-radius:99px;
+  opacity:0;transition:.28s ease;pointer-events:none;z-index:9;
+  max-width:88vw;text-align:center;
+}
+.toast.on{opacity:.94;transform:translate(-50%,0)}
+
+@media (prefers-color-scheme:dark){
+  .toast{background:#e5e7eb;color:#111827}
+}
+@media (max-width:420px){
+  .logo-wrap{width:168px;height:168px;margin-bottom:30px}
+  .ring-box{inset:-18px}
+  .logo-wrap::before{width:168px;height:168px}
+  .logo{width:142px;height:142px;border-radius:26px}
+  .check{width:34px;height:34px}
+  .check svg{width:18px;height:18px}
+  .title{font-size:20px}
+  .progress{width:170px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+
+</style>
+</head>
+<body>
+<main class="stage" role="main">
+  <div class="logo-wrap">
+    <div class="ring-box">
+      <div class="track"></div>
+      <div class="ring"></div>
+      <div class="pulse"></div>
+    </div>
+    <img class="logo" id="logo" src="https://pic0.dehua.cloud94.cn/2025/08/631cfee3-61c1-4b91-9261-2d0f142d717b.png" alt="天才程序员" decoding="async">
+    <div class="check" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 7"/></svg>
+    </div>
+  </div>
+
+  <h1 class="title">天才程序员</h1>
+  <p class="tip" id="tip">正在检测最快线路…</p>
+
+  <div class="progress indet" id="progress" role="progressbar" aria-label="加载进度"><i></i></div>
+
+  <button class="go" id="go" type="button">立即前往</button>
+  <p class="foot">本页面仅用于演示界面效果</p>
+</main>
+<script>window.__CFDR__={"targets":[{"url":"https://hk.example.com","origin":"https://hk.example.com","basePath":"","host":"hk.example.com","probe":"/__probe","label":"香港 · 亚洲优化","priority":0},{"url":"https://sg.example.com","origin":"https://sg.example.com","basePath":"","host":"sg.example.com","probe":"/__probe","label":"新加坡 · 东南亚","priority":0},{"url":"https://us-west.example.com","origin":"https://us-west.example.com","basePath":"","host":"us-west.example.com","probe":"/__probe","label":"美西 · 洛杉矶","priority":0}],"cfg":{"probePath":"/__probe","probeFallbackPath":"/favicon.ico","rounds":3,"timeout":2500,"gap":100,"cacheTtl":300,"selectionMode":"speed","priorityTolerance":30,"preservePath":true,"respectSaveData":true,"autoRedirect":true,"resultDelay":1400,"fallbackIndex":null,"allowQueryTarget":true,"maxWait":6000,"showTarget":false,"demo":true}};</script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA = window.__CFDR__ || { targets: [], cfg: {} };
+  var T = DATA.targets || [];
+  var C = DATA.cfg || {};
+
+  var FALLBACK_ICON = 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' +
+    '<rect width="120" height="120" rx="28" fill="#2563eb"/>' +
+    '<path d="M68 14 30 66h24l-6 40 40-54H62z" fill="#fff"/></svg>'
+  );
+
+  var $tip = document.getElementById('tip');
+  var $progress = document.getElementById('progress');
+  var $bar = $progress.querySelector('i');
+  var $go = document.getElementById('go');
+  var $logo = document.getElementById('logo');
+
+  var qs = new URLSearchParams(location.search);
+  var scores = new Array(T.length).fill(Infinity);
+  var winner = -1;
+  var decided = false;
+  var steps = 0;
+  var totalSteps = T.length * (1 + (C.rounds || 0));
+  var guard = null;
+
+  var DEMO_MS = [96, 41, 173, 62, 128, 55];
+  var CACHE_KEY = 'cfdj:v1:' + location.host;
+  var HOP_KEY = 'cfdj:hop';
+
+  /* ---------------- 小工具 ---------------- */
+
+  function sleep(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  function tip(text, ok) {
+    $tip.textContent = text;
+    $tip.classList.toggle('ok', !!ok);
+  }
+
+  function setProgress(pct) {
+    $progress.classList.remove('indet');
+    $bar.style.width = pct + '%';
+  }
+
+  function bump() {
+    steps++;
+    if (!totalSteps) return;
+    setProgress(Math.min(96, Math.round((steps / totalSteps) * 100)));
+  }
+
+  function toast(msg) {
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('on'); });
+    setTimeout(function () {
+      t.classList.remove('on');
+      setTimeout(function () { t.remove(); }, 320);
+    }, 2800);
+  }
+
+  /* ---------------- 探测 ---------------- */
+
+  function probeUrl(t, path) {
+    if (/^https?:\/\//i.test(path)) return path;
+    return t.origin + path;
+  }
+
+  function realProbe(t, path) {
+    return new Promise(function (resolve) {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, C.timeout);
+      var t0 = performance.now();
+      fetch(probeUrl(t, path), {
+        mode: 'no-cors',
+        cache: 'no-store',
+        credentials: 'omit',
+        redirect: 'follow',
+        signal: ctrl.signal
+      }).then(function () {
+        clearTimeout(timer);
+        resolve(performance.now() - t0);
+      }).catch(function () {
+        clearTimeout(timer);
+        resolve(Infinity);
+      });
+    });
+  }
+
+  function demoProbe(t, path, i) {
+    var base = DEMO_MS[i % DEMO_MS.length];
+    return sleep(base).then(function () { return base + Math.random() * 22; });
+  }
+
+  function probe(t, path, i) {
+    return C.demo ? demoProbe(t, path, i) : realProbe(t, path);
+  }
+
+  /* 先确定该域名可用的探测路径（同时完成 DNS / TCP / TLS 预热） */
+  function resolvePath(t, i) {
+    return probe(t, C.probePath, i).then(function (ms) {
+      if (isFinite(ms)) return { path: C.probePath, ms: ms };
+      if (!C.probeFallbackPath) return { path: null, ms: Infinity };
+      return probe(t, C.probeFallbackPath, i).then(function (f) {
+        return isFinite(f) ? { path: C.probeFallbackPath, ms: f } : { path: null, ms: Infinity };
+      });
+    });
+  }
+
+  function measureOne(t, i) {
+    return resolvePath(t, i).then(function (r) {
+      bump();
+      if (!r.path) return Infinity;
+
+      var best = r.ms;
+      scores[i] = best;
+
+      var chain = Promise.resolve();
+      for (var k = 0; k < (C.rounds || 0); k++) {
+        (function () {
+          chain = chain
+            .then(function () { return C.gap ? sleep(C.gap) : null; })
+            .then(function () { return probe(t, r.path, i); })
+            .then(function (ms) {
+              bump();
+              if (isFinite(ms) && ms < best) best = ms;
+              scores[i] = best;
+            });
+        })();
+      }
+      return chain.then(function () { return best; });
+    });
+  }
+
+  /* ---------------- 结果与跳转 ---------------- */
+
+  function prio(i) {
+    var p = T[i] && T[i].priority;
+    return typeof p === 'number' && isFinite(p) ? p : 0;
+  }
+
+  /** 在一组下标里取延迟最小的那个 */
+  function argmin(list, idx) {
+    var best = -1;
+    var bestVal = Infinity;
+    for (var k = 0; k < idx.length; k++) {
+      var i = idx[k];
+      if (list[i] < bestVal) { bestVal = list[i]; best = i; }
+    }
+    return best;
+  }
+
+  /**
+   * 选出最终目标。
+   *   speed    最快者胜，priority 字段被忽略
+   *   priority 最高优先级的可用节点胜；但它若比全局最快慢超过 PRIORITY_TOLERANCE%，就让位给最快的
+   *   strict   最高优先级的可用节点胜，完全不看延迟
+   * 返回 -1 表示全部不可达。
+   */
+  function pickWinner(list) {
+    var reachable = [];
+    for (var i = 0; i < list.length; i++) if (isFinite(list[i])) reachable.push(i);
+    if (!reachable.length) return -1;
+
+    var mode = C.selectionMode || 'speed';
+    if (mode === 'speed') return argmin(list, reachable);
+
+    var top = -Infinity;
+    for (var j = 0; j < reachable.length; j++) top = Math.max(top, prio(reachable[j]));
+
+    var group = [];
+    for (var m = 0; m < reachable.length; m++) {
+      if (prio(reachable[m]) === top) group.push(reachable[m]);
+    }
+
+    var preferred = argmin(list, group);
+    if (mode === 'strict') return preferred;
+
+    var fastest = argmin(list, reachable);
+    var tol = (C.priorityTolerance || 0) / 100;
+    return list[preferred] <= list[fastest] * (1 + tol) ? preferred : fastest;
+  }
+
+  /** 全部不可达时的兜底：FALLBACK_INDEX 指定了下标就用它，否则取优先级最高的 */
+  function fallbackPick() {
+    if (typeof C.fallbackIndex === 'number' && isFinite(C.fallbackIndex)) {
+      return Math.min(Math.max(0, Math.round(C.fallbackIndex)), T.length - 1);
+    }
+    var best = 0;
+    var bestP = -Infinity;
+    for (var i = 0; i < T.length; i++) {
+      var p = prio(i);
+      if (p > bestP) { bestP = p; best = i; }
+    }
+    return best;
+  }
+
+  function destUrl(i) {
+    var t = T[i];
+    var dest = t.url;
+    if (!C.preservePath) return dest;
+
+    var p = location.pathname || '/';
+    if (p === '/') p = '';
+    var sp = new URLSearchParams(location.search);
+    ['__to', '__measure', '__noredirect', '__demo'].forEach(function (k) { sp.delete(k); });
+    var q = sp.toString();
+    if (q && !p) p = '/';
+    return dest + p + (q ? '?' + q : '') + (location.hash || '');
+  }
+
+  function writeCache(i) {
+    if (C.demo || !C.cacheTtl) return;
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ url: T[i].origin, t: Date.now() }));
+    } catch (e) { /* 隐私模式等，忽略 */ }
+  }
+
+  function readCache() {
+    if (C.demo || !C.cacheTtl) return null;
+    try {
+      var raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || !o.url || !o.t) return null;
+      if (Date.now() - o.t > C.cacheTtl * 1000) return null;
+      for (var i = 0; i < T.length; i++) if (T[i].origin === o.url) return i;
+      return null;
+    } catch (e) { return null; }
+  }
+
+  function hopCount() {
+    try { return parseInt(sessionStorage.getItem(HOP_KEY) || '0', 10) || 0; } catch (e) { return 0; }
+  }
+
+  function go() {
+    if (winner < 0) return;
+
+    // 最快节点就是当前域名 —— 直接跳会造成死循环
+    if (T[winner].origin === location.origin) {
+      tip('你当前访问的已是最快节点', true);
+      $go.classList.remove('show');
+      return;
+    }
+
+    if (C.demo) {
+      toast('演示模式：正式部署后会跳转到 ' + destUrl(winner));
+      return;
+    }
+    if (hopCount() >= 2) {
+      tip('检测到重复跳转，已停止');
+      $go.classList.add('show');
+      return;
+    }
+    try { sessionStorage.setItem(HOP_KEY, String(hopCount() + 1)); } catch (e) {}
+    location.replace(destUrl(winner));
+  }
+
+  function showGoButton() {
+    $go.classList.add('show');
+  }
+
+  function finish(finalScores) {
+    if (decided) return;
+    decided = true;
+    if (guard) { clearTimeout(guard); guard = null; }
+
+    var list = finalScores || scores;
+    var best = pickWinner(list);
+
+    setProgress(100);
+    document.body.classList.add('done');
+
+    if (best >= 0) {
+      winner = best;
+      writeCache(best);
+
+      // 优先级模式下选中的可能不是最快的那个，文案要跟着说实话
+      var fastestVal = Infinity;
+      for (var i = 0; i < list.length; i++) if (list[i] < fastestVal) fastestVal = list[i];
+      var isFastest = list[best] <= fastestVal;
+
+      tip(C.showTarget
+        ? '已为你选择线路：' + (T[best].label || T[best].host)
+        : (isFastest ? '已找到最快线路，正在前往…' : '已为你选好线路，正在前往…'), true);
+    } else {
+      winner = fallbackPick();
+      tip('正在使用默认线路…');
+    }
+
+    if (C.autoRedirect && !qs.has('__noredirect')) {
+      setTimeout(go, C.resultDelay || 0);
+    } else {
+      showGoButton();
+    }
+  }
+
+  /* ---------------- 入口 ---------------- */
+
+  function boot() {
+    if (!T.length) {
+      tip('尚未配置目标域名');
+      $progress.style.display = 'none';
+      return;
+    }
+
+    // ?__to=N 强制指定
+    if (C.allowQueryTarget && qs.has('__to')) {
+      var n = parseInt(qs.get('__to'), 10);
+      if (isFinite(n) && n >= 0 && n < T.length) {
+        winner = n;
+        decided = true;
+        setProgress(100);
+        document.body.classList.add('done');
+        tip('正在前往…', true);
+        if (C.autoRedirect && !qs.has('__noredirect')) setTimeout(go, C.resultDelay || 0);
+        else showGoButton();
+        return;
+      }
+    }
+
+    // 命中缓存
+    var cached = qs.has('__measure') ? null : readCache();
+    if (cached !== null) {
+      winner = cached;
+      decided = true;
+      setProgress(100);
+      document.body.classList.add('done');
+      tip('正在前往…', true);
+      writeCache(cached);
+      setTimeout(go, 320);
+      return;
+    }
+
+    // 省流模式：不探测，直接用兜底线路
+    if (C.respectSaveData && navigator.connection && navigator.connection.saveData) {
+      winner = fallbackPick();
+      decided = true;
+      setProgress(100);
+      document.body.classList.add('done');
+      tip('正在前往…', true);
+      setTimeout(go, 320);
+      return;
+    }
+
+    tip(C.demo ? '演示模式：模拟测速中…' : '正在检测最快线路…');
+
+    // 兜底：整体超时就直接用已知的最好结果 / 默认线路
+    guard = setTimeout(function () { finish(scores); }, C.maxWait || 6000);
+
+    Promise.all(T.map(function (t, i) { return measureOne(t, i); }))
+      .then(finish)
+      .catch(function () { finish(scores); });
+  }
+
+  $logo.addEventListener('error', function () { $logo.src = FALLBACK_ICON; });
+  $go.addEventListener('click', go);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+</body>
+</html>

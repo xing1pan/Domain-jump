@@ -1,0 +1,19 @@
+{
+  "name": "cf-domain-jump",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker 多域名测速跳转页",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test \"test/**/*.test.js\"",
+    "preview": "node scripts/build-preview.mjs",
+    "shots": "node scripts/shots.mjs",
+    "e2e": "node scripts/e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.0",
+    "wrangler": "^4.0.0"
+  }
+}

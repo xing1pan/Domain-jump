@@ -1,0 +1,90 @@
+name = "cf-domain-jump"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+# 变量全部在 Cloudflare 控制台维护，这里不定义 [vars]。
+# keep_vars = true 告诉 wrangler：部署时保留控制台里已设置的变量，
+# 否则 deploy 会用「空绑定」把它们覆盖掉。
+keep_vars = true
+
+# ============================================================================
+# 变量配置位置
+#   Cloudflare 控制台 → Workers 和 Pages → cf-domain-jump
+#     → 设置 → 变量和密钥 → 添加变量
+#
+# 下面这份清单只是「参考 / 备份」，保持注释状态。
+# 一旦取消注释，toml 里的值会在每次 deploy 时覆盖控制台里的同名变量。
+#
+# 本地 `wrangler dev` 调试时，把需要的变量写进项目根目录的 .dev.vars
+# （该文件已在 .gitignore 中），例如：
+#     DOMAINS=https://a.example.com,https://b.example.com
+# ============================================================================
+#
+# [vars]
+# # 【必填】目标域名列表，逗号或换行分隔
+# # 第 4 段是优先级：数字越大越优先，默认 0，可为负
+# DOMAINS = """
+# https://a.example.com|/__probe|主站|10
+# https://b.example.com|/__probe|备用|0
+# https://c.example.com|/__probe|降级|-5
+# """
+#
+# # —— 选择策略 ——
+# # speed    纯比速度，最快者胜（默认，忽略优先级）
+# # priority 优先级优先，但优先节点慢太多时让位给最快的
+# # strict   严格按优先级，只要可达就选优先级最高的，不看速度
+# SELECTION_MODE = "speed"
+# # priority 模式下，优先节点最多允许比最快节点慢多少（百分比）
+# PRIORITY_TOLERANCE = "30"
+#
+# # —— 探测相关 ——
+# PROBE_PATH = "/__probe"
+# PROBE_FALLBACK_PATH = "/favicon.ico"
+# MEASURE_ROUNDS = "3"
+# MEASURE_TIMEOUT = "2500"
+# MEASURE_GAP = "100"
+# CACHE_TTL = "300"
+#
+# # —— 跳转行为 ——
+# PRESERVE_PATH = "true"
+# RESPECT_SAVE_DATA = "true"
+# AUTO_REDIRECT = "true"
+# RESULT_DELAY = "900"
+# MAX_WAIT = "6000"
+# # auto = 全部不可达时取优先级最高的；也可以填固定下标 0/1/2
+# FALLBACK_INDEX = "auto"
+# ALLOW_QUERY_TARGET = "true"
+# SHOW_TARGET = "false"
+#
+# # —— 页面外观 ——
+# BRAND_NAME = "天才程序员"
+# SUBTITLE = "正在检测最快线路…"
+# LOGO_URL = "https://pic0.dehua.cloud94.cn/2025/08/631cfee3-61c1-4b91-9261-2d0f142d717b.png"
+# FOOTER_TEXT = ""
+# ACCENT_COLOR = "#2563eb"
+#
+# # —— 其他 ——
+# DEBUG = "false"
+# DEMO = "false"
+
+# ============================================================================
+# 自定义域名 / 路由（按需取消注释）
+# ============================================================================
+# routes = [
+#   { pattern = "go.example.com", custom_domain = true },
+# ]
+#
+# [[routes]]
+# pattern = "example.com/go/*"
+# zone_name = "example.com"
+
+# ============================================================================
+# 如果你希望「同一份代码」被部署到多个域名上（每个域名各自回答 /__probe），
+# 用多环境即可，例如：
+# ============================================================================
+# [env.hk]
+# routes = [{ pattern = "hk.example.com", custom_domain = true }]
+#
+# [env.sg]
+# routes = [{ pattern = "sg.example.com", custom_domain = true }]
